@@ -12,7 +12,6 @@ class VentanaTk(TkinterDnD.Tk):
     def __init__(self, **kw):
         super().__init__(**kw)
         self._config_VentanaTk()
-
     
     def _config_VentanaTk(self):
         self.columnconfigure(0, weight=1)
@@ -25,7 +24,7 @@ class VentanaTk(TkinterDnD.Tk):
         self.bar.ontop()
 
         self.drop_target_register(DND_FILES)
-        self.dnd_bind("<<Drop>>", self.obtenDrop)
+        self.dnd_bind("<<Drop>>", self.getDrop)
         
         self.bar.fm_bts.bt_min.config(command=self.minimize)
         self.bar.fm_bts.bt_x.config(command=self.closeApp)
@@ -43,10 +42,9 @@ class VentanaTk(TkinterDnD.Tk):
         )
         threading.Thread(target=self.icon.run, daemon=True).start()
 
-
     def addGrip(self, bg="gray"):
-        self.grip = MiGrip(self, bg=bg)
-        self.grip.place(relx=1.0, rely=1.0, anchor="se")
+        self.grip = MiGrip(self, bg=bg, w=6)
+        self.grip.place(relx=0.996, rely=0.992, anchor="se")
         self.grip.bind("<Button-1>", self.grip.start_resize)  # Detectar clic inicial
         self.grip.bind("<B1-Motion>", self.grip.perform_resize)
 
@@ -62,9 +60,8 @@ class VentanaTk(TkinterDnD.Tk):
         self.clipboard_append()
         self.update()
 
-    def obtenDrop(self, e):
-        archivos = self.fix(e.data)
-        return self.fix(archivos)
+    def getDrop(self, e):
+        return self.fix(e.data)
 
     def fix(self, texto:str) -> list:
         """retorna list de strings sin llaves"""

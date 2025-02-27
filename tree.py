@@ -20,14 +20,9 @@ class Tree(ttk.Treeview):
             "TIEMPO":80,
             "TAGS":"",
         }
-        h = int(cols["IMAGEN"] / (16/9))-12
-        # print('h :: ', h)
+        # h = int(cols["IMAGEN"] / (16/9))-12
         self.setColumnsTitles(cols)
-        s = ttk.Style()
-        s.configure("mi.Treeview", rowheight=h, indicatorsize=0, indent=0)
-        # s.configure("mi.Treeview", indent=0)
-        self.config(style="mi.Treeview")
-        self.bind("<<TreeviewSelect>>", self.choiceItem)
+        # self.bind("<<TreeviewSelect>>", self.itemClick)
 
 
     def setColumnsTitles(self, dtitles:dict):
@@ -42,6 +37,8 @@ class Tree(ttk.Treeview):
             if dtitles.get(title):
                 w = dtitles.get(title)
                 self.column(title, width=w, minwidth=w, stretch=False)
+        # self.tag_configure("ID", foreground="orange")
+        # self.set()
         
     def setRow(self, li:list):
         """li: [Image[PIL], **values]"""
@@ -58,7 +55,7 @@ class Tree(ttk.Treeview):
         for item in self.get_children():
             self.delete(item)
 
-    def choiceItem(self, e=None) -> tuple:
+    def itemClick(self, e=None) -> tuple:
         """return ('1', '00:12:14.514', 'Marcador 1')"""
         idx = self.selection()
         res = self.item(idx, option="values")
