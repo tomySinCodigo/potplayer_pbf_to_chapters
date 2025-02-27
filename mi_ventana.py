@@ -4,6 +4,8 @@ from tkinter import ttk
 from ventana_tk2 import VentanaTk
 from mi_tree import MiTree
 from chapters import Chapters
+from pprint import pprint
+
 
 
 class MiVentana(VentanaTk):
@@ -25,10 +27,17 @@ class MiVentana(VentanaTk):
         self.bar.lb_menu.cnfLabelMenu(text="PBF CHAPTERS")
         self.setSize(600, 350)
 
-        self.getStyle()
-        # self.test_archivo()
+        self.setStyle()
+        self.test_archivo()
 
-    def getStyle(self):
+        self.bar.menuItem("obten data", self.getTreeChapters)
+        self.wg_tree.setCurrentRow(2)
+
+    def getTreeChapters(self):
+        li = self.wg_tree.getRows()
+        pprint(li)
+
+    def setStyle(self):
         self.s = ttk.Style()
         # self.s.theme_use('classic')
         self.s.theme_use('default')
@@ -37,7 +46,7 @@ class MiVentana(VentanaTk):
         self.s.configure(
             "mi.Treeview",
             background=bg3,
-            foreground="azure",
+            foreground="#B8B3A4",
             font="Consolas 9 bold",
             fieldbackground=bg3,
             bordercolor=bg3,
@@ -54,7 +63,7 @@ class MiVentana(VentanaTk):
         self.s.configure(
             "mi.Treeview.Heading",
             background=bg3,  # Fondo de los encabezados
-            foreground="azure",    # Texto blanco
+            foreground="#20B2AA",    # Texto blanco
             font=("Consolas", 8, "bold"),  # Fuente del encabezado
             relief="flat"
         )
@@ -64,8 +73,8 @@ class MiVentana(VentanaTk):
         )
         self.s.map(
             "mi.Treeview",
-            background=[("selected", "black")],
-            foreground=[("selected", "lightgreen")],
+            background=[("selected", "#27151B")],
+            foreground=[("selected", "white")],
             # fieldbackground=[("selected", "yellow")]
         )
         # s.configure("mi.Treeview", rowheight=h, indicatorsize=0, indent=0)
@@ -98,6 +107,15 @@ class MiVentana(VentanaTk):
             ("Vertical.Scrollbar.button2", {"side": "bottom", "sticky": ""}),
         ])
         self.wg_tree.scroll.config(style="tree.Vertical.TScrollbar")
+
+        # self.s.configure(
+        #     "mi.Entry",
+        #     background=bg3,
+        #     foreground="orange",
+        #     font="Consolas 9 bold",
+        # )
+        # self.wg_tree.entryPopup.config(style="mi.Entry")
+
 
     def test_archivo(self):
         archivo = "test.pbf"

@@ -17,7 +17,8 @@ class Chapters:
         return plantilla.format(tiempo_i=tiempo_i, tiempo_f=tiempo_f, tag=tag, i=i)
     
 
-chap = Chapters()
-# print(chap.tipoUno("00:01:24.000", "mi tag", "0"))
-# print(chap.tipoDos("00:01:24.000", "mi tag", "0"))
-print(chap.tipoTres("00:00:15.000", "00:01:24.000", "mi tag", "0"))
+if __name__ == '__main__':
+    chap = Chapters()
+    # print(chap.tipoUno("00:01:24.000", "mi tag", "0"))
+    # print(chap.tipoDos("00:01:24.000", "mi tag", "0"))
+    print(chap.tipoTres("00:00:15.000", "00:01:24.000", "mi tag", "0"))

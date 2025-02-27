@@ -12,8 +12,22 @@ al seleccionar un item muestra info del marcador (por el momento lo deshabilite 
 
 ## to do
 aun por implementar
+
 edicion de los datos del treeview (de manera directa)
+
 json o toml para la plantilla de formatos de salida
+
 ver la salida en otra pestaña
+
 agregar un caja de texto con info del marcador y del programa
+
 agregar menu item de recargar el .pbf (resetear edicion), clear all, clear info, export, info desarrollador
+
+
+## fix
+
+se debe usar el select no el Button-1 (porque falla en el metodo)
+```python
+# self.bind("<Button-1>", self.itemClick)
+self.bind("<<TreeviewSelect>>", self.itemClick)
+```

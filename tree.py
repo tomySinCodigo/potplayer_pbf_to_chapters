@@ -16,8 +16,8 @@ class Tree(ttk.Treeview):
         cols = {
             # "IMAGEN":120,
             "IMAGEN":142,
-            "ID":20,
-            "TIEMPO":80,
+            "ID":25,
+            "TIEMPO":105,
             "TAGS":"",
         }
         # h = int(cols["IMAGEN"] / (16/9))-12
