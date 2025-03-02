@@ -3,3 +3,6 @@ otros/
 *.png
 *.pbf
 *.pyc
+*.txt
+__pycache__/
+*.json

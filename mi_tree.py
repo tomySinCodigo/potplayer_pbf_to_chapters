@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tree import Tree
 from pbf_read import PbfRead
+from kcombobox import KCombobox
+from chapters import Chapters
+
 
 
 class EntryPopup(tk.Entry):
@@ -54,9 +57,41 @@ class EntryPopup(tk.Entry):
         return "break"
     
 
-class ComboboxPopup(ttk.Combobox):
-    def __init__(self, parent:ttk.Treeview, **kw):
+class ComboboxPopup(KCombobox):
+    def __init__(
+        self, parent:ttk.Treeview,
+        iid:str, col:int, texto:str, **kw
+    ):
         super().__init__(parent, **kw)
+        self.tv = parent
+        self.idd = iid
+        self.col = col
+        self.texto = texto
+        self._config_ComboboxPopup()
+
+    def _config_ComboboxPopup(self):
+        self.focus_force()
+        self.leeTitulosTexto()
+        self.bind("<Return>", self.onReturn)
+        self.bind("<Escape>", lambda *ignore: self.destroy())
+
+    def onReturn(self, e):
+        row_id = self.tv.focus()
+        values = list(self.tv.item(row_id, "values"))
+        values[self.col] = self.elegido
+        self.tv.item(row_id, values=values)
+        self.destroy()
+
+    def leeTitulosTexto(self):
+        # def lee():
+        #     with open("titles.txt", "r") as t:
+        #         return [l.strip("\n") for l in t.readlines() if l.strip("\n")]
+        # self.items = lee()
+        chap = Chapters()
+        d = chap.readFileToml("titulos")
+        key = d.get("seleccionado")
+        self.items = d.get(key)
+
 
 
 
@@ -70,8 +105,8 @@ class MiTree(Tree):
         self._setScroll()
         self.DATA_PBF = None
         self.H = 20
-        self.bind("<Double-1>", self.itemDoubleClick)
-        self.bind("<Button-1>", self.itemClick)
+        # self.bind("<Double-1>", self.itemDoubleClick)
+        # self.bind("<Button-1>", self.itemClick)
         # self.bind("<<TreeviewSelect>>", self.itemSelect)
 
 
@@ -109,7 +144,7 @@ class MiTree(Tree):
     def itemClick(self, e=None):
         index = self.identify_row(e.y)
         i = int(index[1:])
-        print(f'INDEX::"{index}" -> {self.getRow(index)}', f"i:{i}")
+        # print(f'INDEX::"{index}" -> {self.getRow(index)}', f"i:{i}")
 
     def itemDoubleClick(self, e):
         """Doble click a item"""
@@ -127,16 +162,19 @@ class MiTree(Tree):
         
         # obten dimension de la celda
         x, y, width, height = self.bbox(row_id, col_id)
-        # print(x, y, width, height)
-        print("FIL:COL->", row_id, col_id, "EDIT 2CLICK")
-        # print(col_id == "#0", f'"#0"=={col_id}')
         pady = height//2
 
         col = int(col_id[1:])-1
         texto = self.item(row_id, "values")[col]
-        self.entryPopup = EntryPopup(self, row_id, col, texto)
+
+        if col_id == "#3":
+            # self.entryPopup = ComboboxPopup(self, row_id, col, texto, bg="white", fg="blue")
+            self.entryPopup = ComboboxPopup(self, row_id, col, texto, bg="gray10", fg="skyblue")
+        else:
+            self.entryPopup = EntryPopup(self, row_id, col, texto)
         self.entryPopup.place(
             x=x, y=y+pady,
+            # width=width, anchor="w"
             width=width, height=height, anchor="w"
         )
 
@@ -157,7 +195,6 @@ class MiTree(Tree):
     
     def getRows(self, op:str="values"):
         return [self.item(i, option=op) for i in self.get_children()]
-
 
     def setCurrentRow(self, n_row:int):
         self.selection_set(f"I{n_row:03d}")

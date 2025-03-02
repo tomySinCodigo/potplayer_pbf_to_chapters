@@ -14,6 +14,7 @@ class MiVentana(VentanaTk):
         self._configMiVentana()
 
     def _configMiVentana(self):
+        self.PBF_FILE = None
         self.setIconAll("ty.png")
         self.bar.setBg("#383838")
 
@@ -30,12 +31,79 @@ class MiVentana(VentanaTk):
         self.setStyle()
         self.test_archivo()
 
-        self.bar.menuItem("obten data", self.getTreeChapters)
-        self.wg_tree.setCurrentRow(2)
+        self.bar.menuItem("genera chapters OGG", self.genFileTextoOGG)
+        self.bar.menuItem("genera chapters modo 1", self.genFileModoDos)
+        self.bar.menuItem("genera chapters modo 2", self.genFileModoTres)
+        # self.bar.menuItem("obten titulos", self.)
+        # self.wg_tree.setCurrentRow(2)
+        self.wg_tree.bind("<Double-Button-1>", self.doble)
+
+    def genFileTextoOGG(self):
+        li = self.wg_tree.getRows()
+        d = self.wg_tree.DATA_PBF
+        chap = Chapters()
+        # txt = "CHAPTER01=00:00:00.000\nCHAPTER01NAME=01\n"
+        txt = chap.tipoUno(tiempo="00:00:00.000", tag="", indice=0)
+        for i, e in enumerate(li):
+            _, ts, tag = e
+            t, ms = d[i].get("t"), d[i].get("mseg")
+            txt += chap.tipoUno(ts, tag, i+1)
+        contenido = txt.strip("\n")
+        if self.PBF_FILE:
+            self.makeFileChapter(contenido)
+
+    def _genFileTextoDos(self, metodo, txt="", **kw):
+        li = self.wg_tree.getRows()
+        for i, e in enumerate(li):
+            _, ts, tag = e
+            txt += metodo(ts, tag, i+1)
+        contenido = txt.strip("\n")
+        if self.PBF_FILE:
+            self.makeFileChapter(contenido)
+
+    def genFileModoDos(self):
+        chap = Chapters()
+        txt = chap.tipoDos(tiempo="00:00:00.000", tag="", indice=0)
+        self._genFileTextoDos(chap.tipoDos, txt)
+
+    def genFileModoTres(self):
+        chap = Chapters()
+        li = self.wg_tree.getRows()
+        ti = "00:00:00.000"
+        txt = ""
+        for i, item in enumerate(li):
+            _, ts, tag = item
+            txt += chap.tipoTres(ti, ts, tag, i)
+            ti = ts
+        contenido = txt.strip("\n")
+        if self.PBF_FILE:
+            self.makeFileChapter(contenido)
+        
+
+
 
     def getTreeChapters(self):
         li = self.wg_tree.getRows()
-        pprint(li)
+        # pprint(li)
+        d = self.wg_tree.DATA_PBF
+        # pprint(d)
+        chap = Chapters()
+        txt = ""
+        for i, e in enumerate(li):
+            _, ts, tag = e
+            t, ms = d[i].get("t"), d[i].get("mseg")
+            # print(_, ts, tag, t, ms)
+            txt += chap.tipoUno(ts, tag, i+1)
+        contenido = txt.strip("\n")
+        if self.PBF_FILE:
+            self.makeFileChapter(contenido)
+
+    def makeFileChapter(self, txt:str):
+        r = Path(self.PBF_FILE)
+        with open(f"{r.stem}.txt", "w") as file:
+            file.write(txt)
+
+
 
     def setStyle(self):
         self.s = ttk.Style()
@@ -108,15 +176,6 @@ class MiVentana(VentanaTk):
         ])
         self.wg_tree.scroll.config(style="tree.Vertical.TScrollbar")
 
-        # self.s.configure(
-        #     "mi.Entry",
-        #     background=bg3,
-        #     foreground="orange",
-        #     font="Consolas 9 bold",
-        # )
-        # self.wg_tree.entryPopup.config(style="mi.Entry")
-
-
     def test_archivo(self):
         archivo = "test.pbf"
         self.wg_tree.setPbfFile(archivo)
@@ -127,11 +186,18 @@ class MiVentana(VentanaTk):
         li = super().getDrop(e)
         archivo = li[0]
         if archivo.endswith(".pbf"):
+            self.PBF_FILE = archivo
             self.wg_tree.setPbfFile(archivo)
             h = self.wg_tree.H
             self.s.configure("mi.Treeview", rowheight=h, indicatorsize=0)
-            # chap = Chapters()
             
+    def doble(self, e):
+        self.wg_tree.itemDoubleClick(e)
+        self.setStyle()
+
+    
+        
+
         
 
 

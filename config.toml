@@ -1,0 +1,8 @@
+[plantillas]
+uno = "CHAPTER{i:02d}={tiempo}\nCHAPTER{i:02d}NAME={i:02d} {tag}\n"
+dos = "{i} {tag} {tiempo}\n"
+tres = "{tiempo_i} --> {tiempo_f}\n{i} {tag}\n"
+
+[titulos]
+seleccionado = "basico"
+basico = [ "inicio", "opening", "pausa", "fin pausa", "ending", "avanze",]
