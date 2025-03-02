@@ -6,3 +6,6 @@ otros/
 *.txt
 __pycache__/
 *.json
+build/
+dist/
+*.spec

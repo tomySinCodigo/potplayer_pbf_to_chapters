@@ -4,6 +4,7 @@ from tkinter import ttk
 from ventana_tk2 import VentanaTk
 from mi_tree import MiTree
 from chapters import Chapters
+from ktexto import KText
 from pprint import pprint
 
 
@@ -18,18 +19,31 @@ class MiVentana(VentanaTk):
         self.setIconAll("ty.png")
         self.bar.setBg("#383838")
 
-        self.wg_tree = MiTree(self)
-        self.wg_tree.grid(row=1, column=0, sticky='wens')
         self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        fm_con = tk.Frame(self)
+        fm_con.grid(row=1, column=0, sticky='wens')
+        # fm_con.columnconfigure((0,1), weight=1)
+
+
+        self.wg_tree = MiTree(fm_con)
+        self.wg_tree.grid(row=0, column=0, sticky='wens')
+        self.texw = KText(fm_con)
+        self.texw.grid(row=1, column=0, sticky='wens')
+        fm_con.rowconfigure(0, weight=1)
+        fm_con.columnconfigure(0, weight=1)
+        self.texw.tex.config(height=6)
+
 
         bg = "black"
         self.addGrip(bg)
         self.setBg(bg)
         self.bar.lb_menu.cnfLabelMenu(text="PBF CHAPTERS")
-        self.setSize(600, 350)
+        self.setSize(500, 450)
 
         self.setStyle()
-        self.test_archivo()
+        # self.test_archivo()
 
         self.bar.menuItem("genera chapters OGG", self.genFileTextoOGG)
         self.bar.menuItem("genera chapters modo 1", self.genFileModoDos)
@@ -37,6 +51,15 @@ class MiVentana(VentanaTk):
         # self.bar.menuItem("obten titulos", self.)
         # self.wg_tree.setCurrentRow(2)
         self.wg_tree.bind("<Double-Button-1>", self.doble)
+        self.texw.setScroll(self.s)
+        self.msgn("PBF TO CHAPTERS: ")
+        self.msgn("arrastra un archivo .pbf\n", num=2)
+
+    def msg(self, texto, **kw):
+        self.texw.msg(texto, **kw)
+
+    def msgn(self, texto:str, num:int=0, **kw):
+        self.texw.msgNum(texto, num, **kw)
 
     def genFileTextoOGG(self):
         li = self.wg_tree.getRows()
@@ -78,9 +101,6 @@ class MiVentana(VentanaTk):
         contenido = txt.strip("\n")
         if self.PBF_FILE:
             self.makeFileChapter(contenido)
-        
-
-
 
     def getTreeChapters(self):
         li = self.wg_tree.getRows()
@@ -102,8 +122,8 @@ class MiVentana(VentanaTk):
         r = Path(self.PBF_FILE)
         with open(f"{r.stem}.txt", "w") as file:
             file.write(txt)
-
-
+        self.msgn(f"Archivo creado: {r.stem}.txt\n")
+        self.msgn(txt)
 
     def setStyle(self):
         self.s = ttk.Style()
@@ -190,17 +210,16 @@ class MiVentana(VentanaTk):
             self.wg_tree.setPbfFile(archivo)
             h = self.wg_tree.H
             self.s.configure("mi.Treeview", rowheight=h, indicatorsize=0)
-            
+            _ = Path(self.PBF_FILE)
+            self.msgn(_.parent.as_posix() + "/", 4, font="Consolas 10")
+            self.msgn(_.name + "\n", 3, font="Consolas 10")
+
     def doble(self, e):
         self.wg_tree.itemDoubleClick(e)
         self.setStyle()
 
-    
-        
-
-        
-
 
 if __name__ == '__main__':
     wg = MiVentana()
+    wg.geometry("500x450")
     wg.mainloop()
