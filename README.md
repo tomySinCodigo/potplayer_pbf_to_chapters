@@ -1,7 +1,7 @@
 # Potplayer .pbf to chapters
 programa realizado con python y tkinter para visualizar los capitulos o chapters de un video que genera potplayer (un archivo `.pbf`) y convertirlo a un formato tipo OGG u otro (en progreso) 
 
-![](para_md/captura1.png)
+![](captura1.png)
 
 * arrastra el archivo `.pbf` sobre el programa para que muestre informacion de todos los chapters
 * al seleccionar un item: muestra en la barra del titulo el numero de chapter, el tiempo en milisegundos y el tiempo en timestamp
