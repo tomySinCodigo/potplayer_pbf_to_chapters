@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from tree import Tree
+from ventana_tk2.tree import Tree
 from pbf_read import PbfRead
-from kcombobox import KCombobox
+from ventana_tk2.kcombobox import KCombobox
 from chapters import Chapters
-
 
 
 class EntryPopup(tk.Entry):
@@ -81,6 +80,7 @@ class ComboboxPopup(KCombobox):
         values[self.col] = self.elegido
         self.tv.item(row_id, values=values)
         self.destroy()
+        self.tv.focus_force()
 
     def leeTitulosTexto(self):
         # def lee():
@@ -106,6 +106,7 @@ class MiTree(Tree):
         # self.bind("<Double-1>", self.itemDoubleClick)
         # self.bind("<Button-1>", self.itemClick)
         # self.bind("<<TreeviewSelect>>", self.itemSelect)
+        self.bind("<Return>", self.returnPressedEdit)
 
 
     def _setScroll(self):
@@ -133,8 +134,7 @@ class MiTree(Tree):
 
     def itemSelect(self, e=None) -> tuple[int, dict]:
         tp = super().itemClick(e)
-        indice = int(tp[0])-1
-        # print(self.DATA_PBF[indice])
+        indice = int(tp[0])-1 if tp else 0
         return indice, self.DATA_PBF[indice]
 
     def itemClick(self, e=None):
@@ -152,7 +152,9 @@ class MiTree(Tree):
         row_id = self.identify_row(e.y)
         col_id = self.identify_column(e.x)
         # print(row_id, col_id)
+        self._showPopupEdit(row_id, col_id)
 
+    def _showPopupEdit(self, row_id:str, col_id:str):
         if not row_id or col_id in ["#0", "#1"]: # si el encabezado se eligio (y para que no se editen las cols 1 y 2)
             return
         
@@ -200,3 +202,7 @@ class MiTree(Tree):
     
     def getNumChapters(self) -> int:
         return len(self.DATA_PBF) if self.DATA_PBF else 0
+
+    def returnPressedEdit(self, e):
+        row_id = self.focus()
+        self._showPopupEdit(row_id, "#3")

@@ -2,9 +2,9 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from ventana_tk2 import VentanaTk
-from mi_tree import MiTree
+from ventana_tk2.mi_tree import MiTree
 from chapters import Chapters
-from ktexto import KText
+from ventana_tk2.ktexto import KText
 
 
 class MiVentana(VentanaTk):
@@ -20,26 +20,23 @@ class MiVentana(VentanaTk):
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
-        fm_con = tk.Frame(self)
-        fm_con.grid(row=1, column=0, sticky='wens')
-        # fm_con.columnconfigure((0,1), weight=1)
-
-
-        self.wg_tree = MiTree(fm_con)
+        self.pw = tk.PanedWindow(
+            self, orient=tk.HORIZONTAL,
+            sashwidth=5, sashrelief="flat", bg="black"
+        )
+        self.pw.grid(row=1, column=0, sticky='wens')
+        self.wg_tree = MiTree(self.pw)
         self.wg_tree.grid(row=0, column=0, sticky='wens')
-        self.texw = KText(fm_con)
-        self.texw.grid(row=1, column=0, sticky='wens')
-        fm_con.rowconfigure(0, weight=1)
-        fm_con.columnconfigure(0, weight=1)
-        self.texw.tex.config(height=6)
-
+        self.texw = KText(self.pw)
 
         bg = "black"
         self.addGrip(bg)
         self.setBg(bg)
         self.bar.lb_menu.cnfLabelMenu(text="PBF CHAPTERS")
-        self.setSize(500, 450)
 
+        chap = Chapters()
+        sk = chap.readFileToml('skin')
+        self.setSize(*sk.get('size'))
         self.setStyle()
         # self.test_archivo()
 
@@ -55,6 +52,24 @@ class MiVentana(VentanaTk):
 
         # self.bind("<<TreeviewSelect>>", self.itemSelect)
         self.wg_tree.bind('<<TreeviewSelect>>', self.itemSelect)
+
+        # self.pw.add(self.wg_tree, minsize=300, stretch='always', width=450)
+        wp1 = sk.get('panel1')
+        self.pw.add(self.wg_tree, minsize=300, width=wp1)
+        self.pw.add(self.texw)
+        # self.test_archivo()
+        self.msgn('-- EJEMPLO CHAPTERS --\n')
+        self.msgn("OGG:\n", 6)
+        self.msgn("CHAPTER01=00:00:00.000\nCHAPTER01NAME=01 name chapter\n", 7)
+        self.msgn("MODO 1:\n", 6)
+        self.msgn('1 name chapter 00:00:00.000\n', 7)
+        self.msgn("MODO 2:\n", 6)
+        self.msgn('00:00:00.000 --> 00:01:30.000\n', 7)
+        self.msgn('1 intro\n', 7)
+        self.msgn('-'*30  + '\n')
+
+        # "dos":"{i} {tag} {tiempo}\n",
+        # "tres":"{tiempo_i} --> {tiempo_f}\n{i} {tag}\n"
 
     def msg(self, texto, **kw):
         self.texw.msg(texto, **kw)
@@ -111,7 +126,6 @@ class MiVentana(VentanaTk):
         for i, e in enumerate(li):
             _, ts, tag = e
             t, ms = d[i].get("t"), d[i].get("mseg")
-            # print(_, ts, tag, t, ms)
             txt += chap.tipoUno(ts, tag, i+1)
         contenido = txt.strip("\n")
         if self.PBF_FILE:
@@ -121,14 +135,13 @@ class MiVentana(VentanaTk):
         r = Path(self.PBF_FILE)
         with open(f"{r.stem}.txt", "w") as file:
             file.write(txt)
-        self.msgn(f"Archivo creado: {r.stem}.txt\n")
-        self.msgn(txt)
+        self.msgn(f"\n\nArchivo creado: {r.stem}.txt\n", 6, font="Consolas 9")
+        self.texw.see()
+        self.msgn(f'{txt}\n', num=1)
 
     def setStyle(self):
         self.s = ttk.Style()
-        # self.s.theme_use('classic')
         self.s.theme_use('default')
-        # self.s = self.wg_tree.s
         bg3 = "gray10"
         self.s.configure(
             "mi.Treeview",
@@ -217,7 +230,6 @@ class MiVentana(VentanaTk):
             self.msgn(_.parent.as_posix() + "/", 4, font="Consolas 10")
             self.msgn(_.name + "\n", 3, font="Consolas 10")
             self.texw.see()
-
             
     def doble(self, e):
         self.wg_tree.itemDoubleClick(e)
@@ -227,11 +239,8 @@ class MiVentana(VentanaTk):
         indice, d = self.wg_tree.itemSelect(e)
         self.bar.clearTextTitle()
         self.bar.msg(f"CHAPTER[{indice+1}]  ({d.get('mseg')}) : {d.get('tiempo')}", tag='infobar')
-        # print(d)
-
 
 
 if __name__ == '__main__':
     wg = MiVentana()
-    wg.geometry("500x450")
     wg.mainloop()

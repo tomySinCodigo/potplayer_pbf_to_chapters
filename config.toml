@@ -6,3 +6,7 @@ tres = "{tiempo_i} --> {tiempo_f}\n{i} {tag}\n"
 [titulos]
 seleccionado = "basico"
 basico = [ "inicio", "opening", "pausa", "fin pausa", "ending", "avanze",]
+
+[skin]
+size = [900, 430]
+panel1 = 500
