@@ -237,6 +237,10 @@ class Barra(tk.Frame):
         self.fm_bts.bt_x.setBg(color)
         self.text_titulo.config(bg=color)
 
+    def clearTextTitle(self):
+        self.text_titulo.config(state='normal')
+        self.text_titulo.delete('1.0', tk.END)
+        self.text_titulo.config(state='disabled')
 
 
 

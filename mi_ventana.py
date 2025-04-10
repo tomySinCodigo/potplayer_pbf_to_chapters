@@ -5,8 +5,6 @@ from ventana_tk2 import VentanaTk
 from mi_tree import MiTree
 from chapters import Chapters
 from ktexto import KText
-from pprint import pprint
-
 
 
 class MiVentana(VentanaTk):
@@ -16,7 +14,7 @@ class MiVentana(VentanaTk):
 
     def _configMiVentana(self):
         self.PBF_FILE = None
-        self.setIconAll("ty.png")
+        self.setIconAll("video16.png")
         self.bar.setBg("#383838")
 
         self.rowconfigure(1, weight=1)
@@ -54,6 +52,9 @@ class MiVentana(VentanaTk):
         self.texw.setScroll(self.s)
         self.msgn("PBF TO CHAPTERS: ")
         self.msgn("arrastra un archivo .pbf\n", num=2)
+
+        # self.bind("<<TreeviewSelect>>", self.itemSelect)
+        self.wg_tree.bind('<<TreeviewSelect>>', self.itemSelect)
 
     def msg(self, texto, **kw):
         self.texw.msg(texto, **kw)
@@ -104,9 +105,7 @@ class MiVentana(VentanaTk):
 
     def getTreeChapters(self):
         li = self.wg_tree.getRows()
-        # pprint(li)
         d = self.wg_tree.DATA_PBF
-        # pprint(d)
         chap = Chapters()
         txt = ""
         for i, e in enumerate(li):
@@ -211,12 +210,25 @@ class MiVentana(VentanaTk):
             h = self.wg_tree.H
             self.s.configure("mi.Treeview", rowheight=h, indicatorsize=0)
             _ = Path(self.PBF_FILE)
+
+            self.msgn('[', 7)
+            self.msgn(f' {self.wg_tree.getNumChapters()} ', 6)
+            self.msgn('Chapters ] ', 7)
             self.msgn(_.parent.as_posix() + "/", 4, font="Consolas 10")
             self.msgn(_.name + "\n", 3, font="Consolas 10")
+            self.texw.see()
 
+            
     def doble(self, e):
         self.wg_tree.itemDoubleClick(e)
         self.setStyle()
+
+    def itemSelect(self, e=None):
+        indice, d = self.wg_tree.itemSelect(e)
+        self.bar.clearTextTitle()
+        self.bar.msg(f"CHAPTER[{indice+1}]  ({d.get('mseg')}) : {d.get('tiempo')}", tag='infobar')
+        # print(d)
+
 
 
 if __name__ == '__main__':

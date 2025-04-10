@@ -97,7 +97,7 @@ class KText(tk.Frame):
             self.tex.tag_config(tag, background=bg, **kw)
 
     def clear(self):
-        self.tex.delete('0.1', 'end')
+        self.tex.delete('1.0', 'end')
 
     def toClipboard(self, texto:str):
         self.clipboard_clear()

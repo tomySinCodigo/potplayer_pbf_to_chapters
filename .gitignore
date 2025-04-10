@@ -1,6 +1,4 @@
 otros/
-*.jpg
-*.png
 *.pbf
 *.pyc
 *.txt
@@ -9,3 +7,4 @@ __pycache__/
 build/
 dist/
 *.spec
+*.code-workspace

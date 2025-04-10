@@ -93,8 +93,6 @@ class ComboboxPopup(KCombobox):
         self.items = d.get(key)
 
 
-
-
 class MiTree(Tree):
     def __init__(self, parent, *args, **kw):
         super().__init__(parent=parent, *args, **kw)
@@ -119,6 +117,7 @@ class MiTree(Tree):
     def setPbfFile(self, file_pbf:str, w:int=120, ar:float=16/9, modh=10):
         self.PBF = PbfRead(file_pbf)
         self.DATA_PBF = self.PBF.getData()
+        # print('self.DATA_PBF :: ', self.DATA_PBF)
         h = int(w/ar) + modh
         self.H = h
         self.clearRows()
@@ -132,19 +131,16 @@ class MiTree(Tree):
             ]
             self.setRow(row)
 
-    def itemSelect(self, e=None):
+    def itemSelect(self, e=None) -> tuple[int, dict]:
         tp = super().itemClick(e)
-        # print('tp :: ', tp)
         indice = int(tp[0])-1
-        # indice = int(tp[0])
-        print(self.DATA_PBF[indice])
-
-        # print(self.getColumn("TIEMPO"))
+        # print(self.DATA_PBF[indice])
+        return indice, self.DATA_PBF[indice]
 
     def itemClick(self, e=None):
         index = self.identify_row(e.y)
         i = int(index[1:])
-        # print(f'INDEX::"{index}" -> {self.getRow(index)}', f"i:{i}")
+        print(f'INDEX::"{index}" -> {self.getRow(index)}', f"i:{i}")
 
     def itemDoubleClick(self, e):
         """Doble click a item"""
@@ -201,3 +197,6 @@ class MiTree(Tree):
 
     def getCurrentRow(self):
         return self.selection()
+    
+    def getNumChapters(self) -> int:
+        return len(self.DATA_PBF) if self.DATA_PBF else 0
